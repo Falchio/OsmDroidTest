@@ -8,13 +8,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
 import ru.piteravto.osmroutetest.App
 import ru.piteravto.osmroutetest.databinding.FragmentMapBinding
 import java.io.File
 
-class MapFragment: Fragment() {
+class MapFragment : Fragment() {
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +48,17 @@ class MapFragment: Fragment() {
         super.onStart()
 
         val mapView = binding.map
-        mapView.setTileSource(TileSourceFactory.MAPNIK)
+        mapView.apply {
+            setTileSource(TileSourceFactory.MAPNIK)
+            minZoomLevel = 1
+            maxZoomLevel = 16
+            setBuiltInZoomControls(true)
+            setMultiTouchControls(true)
+        }
+
+        val controller = mapView.controller
+        val defaultPosition = GeoPoint(59.962447, 30.441147)
+        controller.setCenter(defaultPosition)
+        controller.setZoom(10)
     }
 }
