@@ -1,5 +1,7 @@
 package ru.piteravto.osmroutetest.map
 
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
@@ -52,15 +54,25 @@ class MapFragment : Fragment() {
         super.onStart()
 
         setupMapView()
-        viewModel = ViewModelProvider(this)[MapViewModel::class.java]
-        viewModel.road.observe(viewLifecycleOwner,{ roadOverlay -> setupRoad(roadOverlay) })
-        viewModel.requestRoad()
+//        viewModel = ViewModelProvider(this)[MapViewModel::class.java]
+//        viewModel.road.observe(viewLifecycleOwner,{ roadOverlay -> setupRoad(roadOverlay) })
+//        viewModel.requestRoad()
+
+        val points = TestData.getTestGeoPointList()
+        val roadOverlay = Polyline().apply {
+            setPoints(points)
+            paint.strokeJoin = Paint.Join.ROUND //округляет соединение линий
+            paint.strokeCap = Paint.Cap.ROUND   //округляет окончание линий на концах маршрута
+            paint.strokeWidth = 5f
+            paint.color = Color.RED
+        }
+        setupRoad(roadOverlay)
 
     }
 
     private fun setupRoad(roadOverlay: Polyline) {
 
-        Log.e("MapFragment", "setupRoad: ${roadOverlay.numberOfPoints}" )
+        Log.e("MapFragment", "setupRoad: ${roadOverlay.numberOfPoints}")
         binding.map.overlays.add(roadOverlay)
         binding.map.invalidate()
     }
@@ -69,8 +81,8 @@ class MapFragment : Fragment() {
         val mapView = binding.map
         mapView.apply {
             setTileSource(TileSourceFactory.MAPNIK)
-            minZoomLevel = 1
-            maxZoomLevel = 16
+            minZoomLevel = 6 // размер зума https://wiki.openstreetmap.org/wiki/Zoom_levels
+            maxZoomLevel = 20
             setBuiltInZoomControls(true)
             setMultiTouchControls(true)
         }
@@ -78,6 +90,6 @@ class MapFragment : Fragment() {
         val controller = mapView.controller
         val defaultPosition = GeoPoint(59.962447, 30.441147)
         controller.setCenter(defaultPosition)
-        controller.setZoom(10)
+        controller.setZoom(9)
     }
 }
