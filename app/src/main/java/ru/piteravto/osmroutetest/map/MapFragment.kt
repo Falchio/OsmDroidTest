@@ -84,7 +84,7 @@ class MapFragment : Fragment() {
             val center = points[i]
             val target = points[j]
 
-            val angle = center.calculateAngleTo(target)
+            val angle = center.getAngleTo(target)
             val markerIcon = MarkerIcon.getIcon(R.drawable.arrow_black, angle)
 
             val marker = Marker(mapView).apply {
@@ -99,8 +99,8 @@ class MapFragment : Fragment() {
     private fun createRouteOverlay(points: List<GeoPoint>): Polyline {
         val roadOverlay = Polyline().apply {
             setPoints(points)
-            paint.strokeJoin = Paint.Join.ROUND //округляет соединение линий
-            paint.strokeCap = Paint.Cap.SQUARE   //округляет окончание линий на концах маршрута
+            paint.strokeJoin = Paint.Join.ROUND // соединение линий
+            paint.strokeCap = Paint.Cap.SQUARE   // окончание линий на концах маршрута
             paint.strokeWidth = 10f
             paint.color = Color.RED
         }
