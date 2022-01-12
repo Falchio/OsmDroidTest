@@ -63,29 +63,35 @@ class MapFragment : Fragment() {
     }
 
     private fun setupOverlays() {
-        val points = TestData.getTestGeoPointList()
-        if (points.isEmpty()) return
+        val pointsA = TestData.getTestGeoPointList('A')
+        val pointsB = TestData.getTestGeoPointList('B')
+        if (pointsA.isEmpty()) return
 
-        val roadOverlay = createRouteOverlay(points)
-        binding.map.overlays.add(roadOverlay)
+        val forwardOverlay = createRouteOverlay(pointsA, true)
+        val backwardOverlay = createRouteOverlay(pointsB, false)
+        binding.map.overlays.add(forwardOverlay)
+        binding.map.overlays.add(backwardOverlay)
 
-        addMarkersToOverlay(points)
+        addMarkersToOverlay(pointsA, true)
+        addMarkersToOverlay(pointsB, false)
 
         binding.map.invalidate()
     }
 
-    private fun addMarkersToOverlay(points: List<GeoPoint>) {
+    private fun addMarkersToOverlay(points: List<GeoPoint>, isForward: Boolean) {
         val mapView = binding.map
 
-        for (i in points.indices step 5) {
+        for (i in points.indices step 10) {
             val j = i + 1
-            if (j > points.size) return
+            if (j >= points.size) return
 
             val center = points[i]
             val target = points[j]
 
             val angle = center.getAngleTo(target)
-            val markerIcon = MarkerIcon.getIcon(R.drawable.arrow_black, angle)
+            val drawableId =
+                if (isForward) R.drawable.arrow_forward_dir else R.drawable.arrow_backward_dir
+            val markerIcon = MarkerIcon.getIcon(drawableId, angle)
 
             val marker = Marker(mapView).apply {
                 position = center
@@ -96,13 +102,13 @@ class MapFragment : Fragment() {
         }
     }
 
-    private fun createRouteOverlay(points: List<GeoPoint>): Polyline {
+    private fun createRouteOverlay(points: List<GeoPoint>, isForwardDirection: Boolean): Polyline {
         val roadOverlay = Polyline().apply {
             setPoints(points)
             paint.strokeJoin = Paint.Join.ROUND // соединение линий
             paint.strokeCap = Paint.Cap.SQUARE   // окончание линий на концах маршрута
             paint.strokeWidth = 10f
-            paint.color = Color.RED
+            paint.color = if (isForwardDirection) Color.RED else Color.BLUE
         }
         return roadOverlay
     }
