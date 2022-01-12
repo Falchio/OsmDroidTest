@@ -4,17 +4,17 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import ru.piteravto.osmroutetest.App
+import ru.piteravto.osmroutetest.R
 import ru.piteravto.osmroutetest.databinding.FragmentMapBinding
 import java.io.File
 
@@ -57,24 +57,43 @@ class MapFragment : Fragment() {
 //        viewModel = ViewModelProvider(this)[MapViewModel::class.java]
 //        viewModel.road.observe(viewLifecycleOwner,{ roadOverlay -> setupRoad(roadOverlay) })
 //        viewModel.requestRoad()
+        setupOverlays()
+    }
 
+    private fun setupOverlays() {
         val points = TestData.getTestGeoPointList()
+        if (points.isEmpty()) return
+
+        val roadOverlay = createRouteOverlay(points)
+        binding.map.overlays.add(roadOverlay)
+
+        addMarkersToOverlay(points)
+
+        binding.map.invalidate()
+    }
+
+    private fun addMarkersToOverlay(points: List<GeoPoint>) {
+        val mapView = binding.map
+        val markerIcon = MarkerIcon.getIcon(R.drawable.arrow, 60f)
+
+        val firstMarker = Marker(mapView).apply {
+            position = points.first()
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+            title = "FIRST"
+            setIcon(markerIcon)
+        }
+        mapView.overlays.add(firstMarker)
+    }
+
+    private fun createRouteOverlay(points: List<GeoPoint>): Polyline {
         val roadOverlay = Polyline().apply {
             setPoints(points)
             paint.strokeJoin = Paint.Join.ROUND //округляет соединение линий
-            paint.strokeCap = Paint.Cap.ROUND   //округляет окончание линий на концах маршрута
-            paint.strokeWidth = 5f
+            paint.strokeCap = Paint.Cap.SQUARE   //округляет окончание линий на концах маршрута
+            paint.strokeWidth = 10f
             paint.color = Color.RED
         }
-        setupRoad(roadOverlay)
-
-    }
-
-    private fun setupRoad(roadOverlay: Polyline) {
-
-        Log.e("MapFragment", "setupRoad: ${roadOverlay.numberOfPoints}")
-        binding.map.overlays.add(roadOverlay)
-        binding.map.invalidate()
+        return roadOverlay
     }
 
     private fun setupMapView() {
@@ -88,8 +107,8 @@ class MapFragment : Fragment() {
         }
 
         val controller = mapView.controller
-        val defaultPosition = GeoPoint(59.962447, 30.441147)
+        val defaultPosition = GeoPoint(59.966527, 30.260113)
         controller.setCenter(defaultPosition)
-        controller.setZoom(9)
+        controller.setZoom(15)
     }
 }
