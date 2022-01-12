@@ -115,12 +115,12 @@ class MapFragment : Fragment() {
             maxZoomLevel = 20
             setBuiltInZoomControls(true)
             setMultiTouchControls(true)
-        }
 
-        with(mapView.controller) {
-            val defaultPosition = GeoPoint(59.96859468141684, 30.24835467338562)
-            setCenter(defaultPosition)
-            setZoom(19)
+            controller.apply {
+                val defaultPosition = GeoPoint(59.96859468141684, 30.24835467338562)
+                setCenter(defaultPosition)
+                setZoom(19)
+            }
         }
     }
 }
