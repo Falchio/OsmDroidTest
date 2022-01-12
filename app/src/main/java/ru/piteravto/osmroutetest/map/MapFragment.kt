@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import org.osmdroid.views.overlay.Polyline
 import ru.piteravto.osmroutetest.App
 import ru.piteravto.osmroutetest.R
 import ru.piteravto.osmroutetest.databinding.FragmentMapBinding
-import ru.piteravto.osmroutetest.map.ExtensionFunction.calculateAngle
 import java.io.File
 
 private const val TAG = "MapFragment"
@@ -79,19 +77,23 @@ class MapFragment : Fragment() {
     private fun addMarkersToOverlay(points: List<GeoPoint>) {
         val mapView = binding.map
 
-        val firstPoint = points[0]
-        val secondPoint = points[1]
-        val angle = firstPoint.calculateAngle(secondPoint)
-        Log.e(TAG, "addMarkersToOverlay: $angle")
-        val markerIcon = MarkerIcon.getIcon(R.drawable.arrow, angle)
+        for (i in points.indices step 5) {
+            val j = i + 1
+            if (j > points.size) return
 
-        val firstMarker = Marker(mapView).apply {
-            position = points.first()
-            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-            title = "FIRST"
-            setIcon(markerIcon)
+            val center = points[i]
+            val target = points[j]
+
+            val angle = center.calculateAngleTo(target)
+            val markerIcon = MarkerIcon.getIcon(R.drawable.arrow_black, angle)
+
+            val marker = Marker(mapView).apply {
+                position = center
+                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                setIcon(markerIcon)
+            }
+            mapView.overlays.add(marker)
         }
-        mapView.overlays.add(firstMarker)
     }
 
     private fun createRouteOverlay(points: List<GeoPoint>): Polyline {
@@ -115,10 +117,11 @@ class MapFragment : Fragment() {
             setMultiTouchControls(true)
         }
 
-        val controller = mapView.controller
-        val defaultPosition = GeoPoint(59.96859468141684, 30.24835467338562)
-        controller.setCenter(defaultPosition)
-        controller.setZoom(19)
+        with(mapView.controller) {
+            val defaultPosition = GeoPoint(59.96859468141684, 30.24835467338562)
+            setCenter(defaultPosition)
+            setZoom(19)
+        }
     }
 }
 
