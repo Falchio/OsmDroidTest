@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import ru.piteravto.osmroutetest.App
@@ -85,6 +86,25 @@ class MapFragment : Fragment() {
 
     private fun addBusStop(testData: List<BusStop>) {
         val mapView = binding.map
+        /* от порядка добавления зависит порядок отображения */
+        addBusStopIcons(testData, mapView)
+        addBusStopsNames(testData, mapView)
+    }
+
+    private fun addBusStopsNames(
+        testData: List<BusStop>,
+        mapView: MapView,
+    ) {
+        testData.forEach {
+            val textMarker = TextMarker.create(mapView, it.getGeoPoint(), it.name)
+            mapView.overlays.add(textMarker)
+        }
+    }
+
+    private fun addBusStopIcons(
+        testData: List<BusStop>,
+        mapView: MapView
+    ) {
         testData.forEach {
             val marker = Marker(mapView).apply {
                 val icon: Drawable = it.getBusIcon() ?: return@forEach
@@ -97,9 +117,6 @@ class MapFragment : Fragment() {
                 title = it.name
             }
             mapView.overlays.add(marker)
-
-            val textMarker = TextMarker.create(mapView, it.getGeoPoint(), it.name)
-            mapView.overlays.add(textMarker)
         }
     }
 

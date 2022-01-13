@@ -7,6 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
     <color name="gray">#181818</color>
     <color name="gray_light">#808080</color>
+
+    <color name="busstop_forward">#7c0a02</color>
+    <color name="busstop_backward">#2a52be</color>
 </resources>
