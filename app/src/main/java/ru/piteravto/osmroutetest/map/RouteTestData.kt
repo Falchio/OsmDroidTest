@@ -4,7 +4,7 @@ import android.util.Log
 import org.osmdroid.util.GeoPoint
 import java.util.*
 
-object TestData {
+object RouteTestData {
 
     fun getTestGeoPointList(char: Char): List<GeoPoint> {
         return when (char) {

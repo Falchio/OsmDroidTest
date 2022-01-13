@@ -2,11 +2,13 @@ package ru.piteravto.osmroutetest.map
 
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -63,8 +65,8 @@ class MapFragment : Fragment() {
     }
 
     private fun setupOverlays() {
-        val pointsA = TestData.getTestGeoPointList('A')
-        val pointsB = TestData.getTestGeoPointList('B')
+        val pointsA = RouteTestData.getTestGeoPointList('A')
+        val pointsB = RouteTestData.getTestGeoPointList('B')
         if (pointsA.isEmpty()) return
 
         val forwardOverlay = createRouteOverlay(pointsA, true)
@@ -72,13 +74,30 @@ class MapFragment : Fragment() {
         binding.map.overlays.add(forwardOverlay)
         binding.map.overlays.add(backwardOverlay)
 
-        addMarkersToOverlay(pointsA, true)
-        addMarkersToOverlay(pointsB, false)
+        addDirectionArrowToOverlay(pointsA, true)
+        addDirectionArrowToOverlay(pointsB, false)
+
+        val busStops = BusStopsTestData.getTestData()
+        addBusStop(busStops)
 
         binding.map.invalidate()
     }
 
-    private fun addMarkersToOverlay(points: List<GeoPoint>, isForward: Boolean) {
+    private fun addBusStop(testData: List<BusStop>) {
+        val mapView = binding.map
+        testData.forEach {
+            val marker = Marker(mapView).apply {
+                val icon: Drawable = it.getBusIcon() ?: return@forEach
+                setIcon(icon)
+                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+                position = it.getGeoPoint()
+
+            }
+            mapView.overlays.add(marker)
+        }
+    }
+
+    private fun addDirectionArrowToOverlay(points: List<GeoPoint>, isForward: Boolean) {
         val mapView = binding.map
 
         for (i in points.indices step 10) {
@@ -91,12 +110,13 @@ class MapFragment : Fragment() {
             val angle = center.getAngleTo(target)
             val drawableId =
                 if (isForward) R.drawable.arrow_forward_dir else R.drawable.arrow_backward_dir
-            val markerIcon = MarkerIcon.getIcon(drawableId, angle)
+            val markerIcon = ResourcesCompat.getDrawable(App.resources, drawableId, null)
 
             val marker = Marker(mapView).apply {
                 position = center
                 setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
                 setIcon(markerIcon)
+                rotation = angle
             }
             mapView.overlays.add(marker)
         }
