@@ -97,7 +97,8 @@ class MapFragment : Fragment() {
                 title = it.name
             }
             mapView.overlays.add(marker)
-            val textMarker = TextMarker.createTextMarker(mapView, it.getGeoPoint(), it.name)
+
+            val textMarker = TextMarker.create(mapView, it.getGeoPoint(), it.name)
             mapView.overlays.add(textMarker)
         }
     }

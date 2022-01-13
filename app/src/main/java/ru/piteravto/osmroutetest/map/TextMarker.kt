@@ -14,7 +14,7 @@ import ru.piteravto.osmroutetest.R
 // TODO: нужно сделать переключение цветов текстового маркера под ночной режим
 object TextMarker {
 
-    fun createTextMarker(
+    fun create(
         map: MapView,
         position: GeoPoint,
         text: String,
@@ -37,7 +37,6 @@ object TextMarker {
             setIcon(draw)
             setAnchor(0.5f, 2f) // смещение по Ox и Oy в % от иконки
             setInfoWindow(null)
-            alpha = 0f
         }
 
         return marker
@@ -47,18 +46,15 @@ object TextMarker {
     private fun getPaint(textSize: Int): Paint {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             setTextSize(dpToPx(textSize))
-            /*  */
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-
             setShadowLayer(
-                5f,
-                5f,
-                5f,
+                2f,
+                2f,
+                2f,
                 ContextCompat.getColor(App.context, R.color.gray_light)
             )
             color = ContextCompat.getColor(App.context, R.color.gray)
             textAlign = Paint.Align.LEFT
-            alpha = 200
         }
 
 
