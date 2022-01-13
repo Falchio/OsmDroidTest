@@ -91,7 +91,10 @@ class MapFragment : Fragment() {
                 setIcon(icon)
                 setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
                 position = it.getGeoPoint()
-
+                textLabelBackgroundColor = Color.TRANSPARENT
+                textLabelFontSize = 6
+                textLabelForegroundColor = Color.RED
+                title = it.name
             }
             mapView.overlays.add(marker)
         }
