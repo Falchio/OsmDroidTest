@@ -12,6 +12,7 @@ import ru.piteravto.osmroutetest.App
 import ru.piteravto.osmroutetest.R
 
 // TODO: нужно сделать переключение цветов текстового маркера под ночной режим
+
 object CustomMarker {
 
     fun createTextMarker(
@@ -21,25 +22,36 @@ object CustomMarker {
         textSize: Int = 8
     ): Marker {
         val paint = getPaint(textSize)
-        val baseline = -paint.ascent() // ascent() is negative
-        val height = (baseline + paint.descent() + dpToPx(4)).toInt()
-        val width = (paint.measureText(text) + dpToPx(16)).toInt()
-        val image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(image)
+        val bitmap = createBitmapForText(paint, text)
+        val canvas = Canvas(bitmap)
         canvas.drawColor(Color.TRANSPARENT)
+        val baseline = -paint.ascent()
         val textCoordinateY = baseline + dpToPx(2)
         val textCoordinateX = dpToPx(8)
         canvas.drawText(text, textCoordinateX, textCoordinateY, paint)
-        val draw: Drawable = BitmapDrawable(App.resources, image)
+        val draw: Drawable = BitmapDrawable(App.resources, bitmap)
 
         val marker = Marker(map).apply {
             this.position = position
             setIcon(draw)
-            setAnchor(0.5f, 2f) // смещение по Ox и Oy в % от иконки
+            setAnchor(
+                Marker.ANCHOR_CENTER,
+                -Marker.ANCHOR_BOTTOM
+            ) // смещение по Ox и Oy в % от иконки
             setInfoWindow(null)
         }
 
         return marker
+    }
+
+    private fun createBitmapForText(
+        paint: Paint,
+        text: String
+    ): Bitmap {
+        val baseline = -paint.ascent() // ascent() is negative
+        val height = (baseline + paint.descent() + dpToPx(4)).toInt()
+        val width = (paint.measureText(text) + dpToPx(16)).toInt()
+        return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     }
 
     /** Подготовка холста */
@@ -80,6 +92,7 @@ object CustomMarker {
             textLabelBackgroundColor = Color.TRANSPARENT
             textLabelFontSize = 6
             textLabelForegroundColor = Color.RED
+            setInfoWindow(null)
         }
     }
 }
