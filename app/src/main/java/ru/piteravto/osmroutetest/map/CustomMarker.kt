@@ -12,9 +12,9 @@ import ru.piteravto.osmroutetest.App
 import ru.piteravto.osmroutetest.R
 
 // TODO: нужно сделать переключение цветов текстового маркера под ночной режим
-object BusStopMarker {
+object CustomMarker {
 
-    fun createNameMarker(
+    fun createTextMarker(
         map: MapView,
         position: GeoPoint,
         text: String,
@@ -70,7 +70,7 @@ object BusStopMarker {
         )
     }
 
-    fun createIconMarker(map: MapView, busStop: BusStop): Marker {
+    fun createBusIconMarker(map: MapView, busStop: BusStop): Marker {
         return Marker(map).apply {
             val icon: Drawable =
                 busStop.getBusIcon()!! //внутри метода Marker.setIcon() есть проверка на null, поэтому ничего страшного случится не может

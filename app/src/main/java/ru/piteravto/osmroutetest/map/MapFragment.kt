@@ -95,7 +95,7 @@ class MapFragment : Fragment() {
         mapView: MapView,
     ) {
         testData.forEach {
-            val textMarker = BusStopMarker.createNameMarker(mapView, it.getGeoPoint(), it.name)
+            val textMarker = CustomMarker.createTextMarker(mapView, it.getGeoPoint(), it.name)
             mapView.overlays.add(textMarker)
         }
     }
@@ -105,7 +105,7 @@ class MapFragment : Fragment() {
         mapView: MapView
     ) {
         testData.forEach {
-            val marker = BusStopMarker.createIconMarker(mapView, it)
+            val marker = CustomMarker.createBusIconMarker(mapView, it)
             mapView.overlays.add(marker)
         }
     }
