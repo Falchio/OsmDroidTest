@@ -85,7 +85,7 @@ class MapFragment : Fragment() {
 
     private fun addBusStop(testData: List<BusStop>) {
         val mapView = binding.map
-        /* от порядка добавления зависит порядок отображения */
+        //TODO: есть проблема с абсолютным наложением друг на друга конечных остановок, возможно их стоит смещать искусственно.
         addBusStopIcons(testData, mapView)
         addBusStopsNames(testData, mapView)
     }
