@@ -26,4 +26,19 @@ data class BusStop(
 
         return ResourcesCompat.getDrawable(App.resources, resId, null)
     }
+
+    fun anchorU(): Float {
+        return when (directionChar) {
+            forwardChar -> 0.5f
+            else -> 0.5f
+        }
+    }
+
+    fun anchorV(): Float {
+        return when (directionChar) {
+            forwardChar -> 2f
+            else -> 2f
+        }
+    }
+
 }

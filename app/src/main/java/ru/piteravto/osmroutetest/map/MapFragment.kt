@@ -2,7 +2,6 @@ package ru.piteravto.osmroutetest.map
 
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.LayoutInflater
@@ -96,7 +95,7 @@ class MapFragment : Fragment() {
         mapView: MapView,
     ) {
         testData.forEach {
-            val textMarker = TextMarker.create(mapView, it.getGeoPoint(), it.name)
+            val textMarker = BusStopMarker.createNameMarker(mapView, it.getGeoPoint(), it.name)
             mapView.overlays.add(textMarker)
         }
     }
@@ -106,16 +105,7 @@ class MapFragment : Fragment() {
         mapView: MapView
     ) {
         testData.forEach {
-            val marker = Marker(mapView).apply {
-                val icon: Drawable = it.getBusIcon() ?: return@forEach
-                setIcon(icon)
-                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-                position = it.getGeoPoint()
-                textLabelBackgroundColor = Color.TRANSPARENT
-                textLabelFontSize = 6
-                textLabelForegroundColor = Color.RED
-                title = it.name
-            }
+            val marker = BusStopMarker.createIconMarker(mapView, it)
             mapView.overlays.add(marker)
         }
     }
